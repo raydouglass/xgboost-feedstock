@@ -1,0 +1,46 @@
+diff --git a/python-package/xgboost/data.py b/python-package/xgboost/data.py
+index 0022a17d4..f1c7f55e2 100644
+--- a/python-package/xgboost/data.py
++++ b/python-package/xgboost/data.py
+@@ -770,9 +770,19 @@ def _cudf_array_interfaces(data: DataType, cat_codes: list) -> bytes:
+
+     """
+     try:
+-        from cudf.api.types import is_categorical_dtype
++        from cudf.api.types import is_bool_dtype, is_categorical_dtype
+     except ImportError:
+         from cudf.utils.dtypes import is_categorical_dtype
++        from pandas.api.types import is_bool_dtype
++
++    # Work around https://github.com/dmlc/xgboost/issues/10181
++    if _is_cudf_ser(data):
++        if is_bool_dtype(data.dtype):
++            data = data.astype(np.uint8)
++    else:
++        data = data.astype(
++            {col: np.uint8 for col in data.select_dtypes(include="bool")}
++        )
+
+     interfaces = []
+
+diff --git a/tests/python-gpu/test_from_cudf.py b/tests/python-gpu/test_from_cudf.py
+index 610c717a9..122fa8171 100644
+--- a/tests/python-gpu/test_from_cudf.py
++++ b/tests/python-gpu/test_from_cudf.py
+@@ -74,16 +74,6 @@ def _test_from_cudf(DMatrixT):
+     assert dtrain.num_col() == 1
+     assert dtrain.num_row() == 5
+
+-    # Boolean is not supported.
+-    X_boolean = cudf.DataFrame({'x': cudf.Series([True, False])})
+-    with pytest.raises(Exception):
+-        dtrain = DMatrixT(X_boolean)
+-
+-    y_boolean = cudf.DataFrame({
+-        'x': cudf.Series([True, False, True, True, True])})
+-    with pytest.raises(Exception):
+-        dtrain = DMatrixT(X_boolean, label=y_boolean)
+-
+
+ def _test_cudf_training(DMatrixT):
+     import pandas as pd
