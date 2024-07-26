@@ -7,10 +7,7 @@ channel_priority: flexible
 conda_build:
   error_overlinking: true
   pkg_format: '2'
-conda_build_tool: conda-build
 conda_forge_output_validation: false
-conda_install_tool: mamba
-conda_solver: libmamba
 github:
   branch_name: main
   tooling_branch_name: main
@@ -27,5 +24,5 @@ provider:
   linux_aarch64: github_actions
   osx: github_actions
   win: github_actions
-test: native_and_emulated
+test: native
 upload_on_branch: main
