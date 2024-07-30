@@ -1,5 +1,5 @@
 librmm:
-  - 24.08
+  - 24.10
 
 channel_sources:
   - rapidsai,rapidsai-nightly,conda-forge
