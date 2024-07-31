@@ -130,6 +130,7 @@ outputs:
 
   - name: xgboost
     build:
+      noarch: python
       string: {{ string_prefix }}_pyh{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
       force_use_keys:
         - librmm                  # [linux and cuda_compiler != "None"]
