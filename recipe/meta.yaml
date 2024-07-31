@@ -1,7 +1,9 @@
 {% set name = "xgboost" %}
 {% set version = "2.1.1" %}
-{% set build_number = 0 %}
+{% set build_number = 1 %}
 {% set min_python = "3.8" %}
+
+{% set string_prefix = "rapidsai" %}
 
 package:
   name: xgboost-split
@@ -24,11 +26,7 @@ build:
   # xref: https://github.com/conda-forge/xgboost-feedstock/issues/173
   {% if python is defined and cuda_compiler_version is defined %}
   skip: >-
-    {{ (
-      ((linux or win) and cuda_compiler_version == "None") or
-      python.split(".")[:2] != min_python.split(".")[:2] or
-      (win and cuda_compiler_version == "11.8")
-    ) }}
+    {{ ((linux or win) and cuda_compiler_version == "None") or python.split(".")[:2] != min_python.split(".")[:2] or (win and cuda_compiler_version == "11.8") }}
   {% endif %}
 
 requirements:
@@ -54,7 +52,7 @@ outputs:
     script: install-win-wrapper.bat  # [win]
     build:
       activate_in_script: true
-      string: rapidsai_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
+      string: {{ string_prefix }}_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
       ignore_run_exports_from:
         - {{ compiler('cuda') }}  # [(cuda_compiler_version or "").startswith("11")]
         - librmm                  # [linux and cuda_compiler != "None"]
@@ -95,7 +93,7 @@ outputs:
     script: install-win-wrapper.bat  # [win]
     build:
       noarch: python
-      string: rapidsai_pyh{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
+      string: {{ string_prefix }}_pyh{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
       force_use_keys:
         - librmm                  # [linux and cuda_compiler != "None"]
       script_env:
@@ -112,13 +110,13 @@ outputs:
         - cross-python_{{ target_platform }}  # [build_platform != target_platform]
       host:
         - {{ pin_subpackage('libxgboost', max_pin='x.x.x') }}
-        - libxgboost =*=rapidsai_h*_{{ PKG_BUILDNUM }}
+        - libxgboost =*={{ string_prefix }}_h*_{{ PKG_BUILDNUM }}
         - python >={{ min_python }}
         - hatchling >=1.12.1
         - pip
       run:
         - {{ pin_subpackage('libxgboost', max_pin='x.x.x') }}
-        - libxgboost =*=rapidsai_h*_{{ PKG_BUILDNUM }}
+        - libxgboost =*={{ string_prefix }}_h*_{{ PKG_BUILDNUM }}
         - python >={{ min_python }}
         - numpy
         - scipy
@@ -132,17 +130,18 @@ outputs:
 
   - name: xgboost
     build:
-      string: rapidsai_pyh{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
+      string: {{ string_prefix }}_pyh{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
       force_use_keys:
         - librmm                  # [linux and cuda_compiler != "None"]
     requirements:
       host:
         - python >={{ min_python }}
         - {{ pin_subpackage('py-xgboost', max_pin="x.x.x.x.x.x") }}
+        - py-xgboost =*={{ string_prefix }}_pyh*_{{ PKG_BUILDNUM }}
       run:
         - python >={{ min_python }}
         - {{ pin_subpackage('py-xgboost', max_pin="x.x.x.x.x.x") }}
-        - py-xgboost =*=rapidsai_pyh*_{{ PKG_BUILDNUM }}
+        - py-xgboost =*={{ string_prefix }}_pyh*_{{ PKG_BUILDNUM }}
     test:
       requires:
         - python
@@ -154,7 +153,7 @@ outputs:
     script: install-r-xgboost.bat  # [win]
     build:
       skip: true  # [r_base in ("4.1", "4.2") or win]
-      string: rapidsai_r{{ r_base | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
+      string: {{ string_prefix }}_r{{ r_base | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
       rpaths:
         - lib/R/lib
       force_use_keys:
@@ -186,7 +185,7 @@ outputs:
         - r-knitr                      # [build_platform != target_platform]
       host:
         - {{ pin_subpackage('libxgboost', max_pin='x.x.x') }}
-        - libxgboost =*=rapidsai_h*_{{ PKG_BUILDNUM }}
+        - libxgboost =*={{ string_prefix }}_h*_{{ PKG_BUILDNUM }}
         - r-base
         - r-matrix
         - r-data.table
@@ -195,7 +194,7 @@ outputs:
         - r-knitr
       run:
         - {{ pin_subpackage('libxgboost', max_pin='x.x.x') }}
-        - libxgboost =*=rapidsai_h*_{{ PKG_BUILDNUM }}
+        - libxgboost =*={{ string_prefix }}_h*_{{ PKG_BUILDNUM }}
         - r-base
         - r-matrix
         - r-data.table
