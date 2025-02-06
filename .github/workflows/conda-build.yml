@@ -28,7 +28,7 @@ jobs:
             os: ubuntu
             runs_on: ['ubuntu-latest']
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64-cuda11.8:cos7
-          - CONFIG: linux_64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13
+          - CONFIG: linux_64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.8cxx_compiler_version13
             UPLOAD_PACKAGES: True
             os: ubuntu
             runs_on: ['ubuntu-latest']
@@ -38,7 +38,7 @@ jobs:
             os: ubuntu
             runs_on: ['ubuntu-latest']
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64-cuda11.8:ubi8
-          - CONFIG: linux_aarch64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13
+          - CONFIG: linux_aarch64_c_compiler_version13cuda_compilercuda-nvcccuda_compiler_version12.8cxx_compiler_version13
             UPLOAD_PACKAGES: True
             os: ubuntu
             runs_on: ['ubuntu-latest']
@@ -51,7 +51,7 @@ jobs:
             UPLOAD_PACKAGES: True
             os: macos
             runs_on: ['macos-13']
-          - CONFIG: win_64_cuda_compilercuda-nvcccuda_compiler_version12.6
+          - CONFIG: win_64_cuda_compilercuda-nvcccuda_compiler_version12.8
             UPLOAD_PACKAGES: True
             os: windows
             runs_on: ['windows-latest']
